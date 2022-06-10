@@ -31,6 +31,20 @@ defmodule Credo.Check.Refactor.NegatedIsNilTest do
   # cases raising issues
   #
 
+  # quick test from https://github.com/rrrene/credo/issues/978
+  test "negated is nil" do
+    """
+    defmodule GuardModule do
+      defguard guard_with_and(struct) when not is_nil(struct) and struct.foo == :baz
+
+      defguard guard_with_or(struct) when not is_nil(struct) or struct.foo == :baz
+    end
+    """
+    |> to_source_file()
+    |> run_check(@described_check)
+    |> assert_issues()
+  end
+
   test "it should report a violation - `when not is_nil`" do
     """
     defmodule CredoSampleModule do
